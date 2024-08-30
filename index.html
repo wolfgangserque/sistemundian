@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doorprize</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="library/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="library/style.css">
+
+    <style>
+        @font-face {
+            font-family: 'BebasNeue';
+            src: url('font/BebasNeue.woff2') format('woff2'),
+                 url('font/BebasNeue.woff') format('woff'),
+                 url('../font/BebasNeue.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background-image: url(/img/bg.jpg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'BebasNeue', sans-serif;
+        }
+
+        .container {
+            text-align: center; /* Center content horizontally */
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 20px; /* Adjust this value to control the distance from the top */
+            right: 20px; /* Adjust this value to control the distance from the right */
+        }
+        .logo-container img {
+            height: 100px; /* Set the size of the logo */
+            margin: 0; /* Remove any margin around the logo */
+        }
+
+        h1 {
+            font-size: 100pt;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #67203b;
+        }
+
+        .name-bar {
+            height: 75px;
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: filter 0.1s; /* Transition effect for blur */
+            background-color: white;
+            border-radius: 40px;
+        }
+
+        .blur {
+            filter: blur(3px); /* Blur effect when shuffling names */
+        }
+
+        .crossed-out {
+            text-decoration: line-through; /* Cross out the name */
+            color: red; /* Optionally change the color to indicate it’s out */
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Section Logo -->
+        <div class="logo-container">
+            <!-- Add logo image as an example -->
+            <img src="img/logo.png" alt="Logo">
+        </div>
+
+        <!-- Header DOORPRIZE -->
+        <h1>DOORPRIZE</h1>
+
+        <!-- Bar for displaying shuffled names -->
+        <div class="name-bar border border-primary p-2" id="nameDisplay">Nama Peserta</div>
+
+        <!-- Start, Stop, and Remove buttons -->
+        <div class="button-container">
+            <button id="startBtn" class="btn btn-success btn-lg mr-3">Start</button>
+            <button id="stopBtn" class="btn btn-danger btn-lg mr-3">Stop</button>
+            <button id="removeBtn" class="btn btn-warning btn-lg">Hanguskan</button>
+        </div>
+    </div>
+
+    <!-- Audio for music -->
+    <audio id="music" src="music/music.mp3"></audio>
+
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="library/jquery-3.5.1.min.js"></script>
+    <script src="library/bootstrap.min.js"></script>
+    <script>
+        // Initial list of participants
+        let names = ['Andi', 'Budi', 'Citra', 'Dewi', 'Eko', 'Fira', 'Gilang', 'Hani', 'Ivan', 'Joko'];
+        let activeNames = [...names]; // Copy of the names array to handle active participants
+        let interval;
+        let isRunning = false;
+
+        const music = document.getElementById('music');
+        const nameDisplay = document.getElementById('nameDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const removeBtn = document.getElementById('removeBtn');
+
+        // Function to start shuffling names
+        function startRaffle() {
+            if (isRunning) return; // Don't start if already running
+            isRunning = true;
+            resetNameDisplay(); // Ensure the display is reset before starting
+            music.play();
+            nameDisplay.classList.add('blur'); // Add blur effect
+            interval = setInterval(() => {
+                const randomName = activeNames[Math.floor(Math.random() * activeNames.length)];
+                nameDisplay.textContent = randomName;
+            }, 50); // Interval set to 50 milliseconds for faster shuffle
+        }
+
+        // Function to stop shuffling names
+        function stopRaffle() {
+            if (!isRunning) return; // Don't stop if not running
+            isRunning = false;
+            clearInterval(interval);
+            music.pause();
+            music.currentTime = 0; // Reset music to the beginning
+            nameDisplay.classList.remove('blur'); // Remove blur effect
+        }
+
+        // Function to "hanguskan" or remove the current name
+        function removeName() {
+            const currentName = nameDisplay.textContent;
+            if (activeNames.includes(currentName)) {
+                // Mark the name as removed by crossing it out
+                nameDisplay.classList.add('crossed-out');
+
+                // Remove the name from the active list after a delay
+                setTimeout(() => {
+                    activeNames = activeNames.filter(name => name !== currentName);
+                    resetNameDisplay(); // Reset display
+                }, 2000); // Adjust delay as needed
+            }
+        }
+
+        // Function to reset the name display
+        function resetNameDisplay() {
+            nameDisplay.textContent = "Nama Peserta"; // Reset display text
+            nameDisplay.classList.remove('crossed-out'); // Remove any crossed-out class
+        }
+
+        // Event listeners for Start, Stop, and Remove buttons
+        startBtn.addEventListener('click', startRaffle);
+        stopBtn.addEventListener('click', stopRaffle);
+        removeBtn.addEventListener('click', removeName);
+    </script>
+</body>
+</html>
