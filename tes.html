@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doorprize</title>
-    <!-- Include Bootstrap CSS -->
     <link href="library/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="library/style.css">
 
     <style>
         @font-face {
             font-family: 'BebasNeue';
-            src: url('font/BebasNeue.woff2') format('woff2'),
-                 url('font/BebasNeue.woff') format('woff'),
-                 url('../font/BebasNeue.ttf') format('truetype');
+            src: url('font/BebasNeue.woff2') format('woff2'), url('font/BebasNeue.woff') format('woff'), url('../font/BebasNeue.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -29,17 +27,18 @@
         }
 
         .container {
-            text-align: center; /* Center content horizontally */
+            text-align: center;
         }
 
         .logo-container {
             position: absolute;
-            top: 80px; /* Adjust this value to control the distance from the top */
-            right: 80px; /* Adjust this value to control the distance from the right */
+            top: 80px;
+            right: 80px;
         }
+
         .logo-container img {
-            height: 100px; /* Set the size of the logo */
-            margin: 0; /* Remove any margin around the logo */
+            height: 100px;
+            margin: 0;
         }
 
         h1 {
@@ -57,18 +56,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: filter 0.1s; /* Transition effect for blur */
+            transition: filter 0.1s;
             background-color: white;
             border-radius: 40px;
         }
 
         .blur {
-            filter: blur(3px); /* Blur effect when shuffling names */
+            filter: blur(3px);
         }
 
         .crossed-out {
-            text-decoration: line-through; /* Cross out the name */
-            color: red; /* Optionally change the color to indicate it’s out */
+            text-decoration: line-through;
+            color: red;
         }
 
         .button-container {
@@ -76,21 +75,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <!-- Section Logo -->
         <div class="logo-container">
-            <!-- Add logo image as an example -->
             <img src="img/logo.png" alt="Logo">
         </div>
 
-        <!-- Header DOORPRIZE -->
         <h1>DOORPRIZE</h1>
 
-        <!-- Bar for displaying shuffled names -->
         <div class="name-bar border border-primary p-2" id="nameDisplay">Nama Peserta</div>
 
-        <!-- Start, Stop, and Remove buttons -->
         <div class="button-container">
             <button id="startBtn" class="btn btn-success btn-lg mr-3">Start</button>
             <button id="stopBtn" class="btn btn-danger btn-lg mr-3">Stop</button>
@@ -98,20 +93,69 @@
         </div>
     </div>
 
-    <!-- Audio for music -->
     <audio id="music" src="music/music.mp3"></audio>
-    <!-- Audio for trumpet sound -->
     <audio id="trumpet" src="music/trumpet.mp3"></audio>
 
-    <!-- Include jQuery and Bootstrap JS -->
     <script src="library/jquery-3.5.1.min.js"></script>
     <script src="library/bootstrap.min.js"></script>
     <script>
         // Initial list of participants
-        let names = ['dr Muhammad Ade Refdian Menkher SpOT', 'dr Putu Bagus Didiet Khresna Wibawa', 'Nyoman Satria Nakayoshi Wijaya', 'Zaynul Arifin', 'Phedy'];
+        let names = [
+            'A Faiz Huwaidi',
+            'Abdaud Rasyid',
+            'Abdul Kadir Hadar',
+            'Abdul Waris Imran',
+            'Abirafdi Amajida Darutama',
+            'Abror Irsan',
+            'Acep Eko Budi Purwanta',
+            'Acep Eko Budi Purwanta',
+            '?Adam Moeljono',
+            'Adhika Manggala Dharma',
+            'Adi Aryanto',
+            'Aditya Jayamanggala',
+            'ADITYA WARMAN',
+            'Adjie Prakoso',
+            'Adlan Hendarji',
+            'Adrian W Tarigan',
+            'Adrianto Perbowo',
+            'Adryan Tanujaya',
+            'Ageng Bagus Sadewo',
+            'Agus Hadian Rahim',
+            'Agus Priambodo',
+            'Ahmad Abdilla Adiwangsa',
+            'AHMAD Hannan amrullah',
+            'Ahmad Heifan',
+            'Ahmad Ramdan',
+            'Aidil Akbar Nurshal',
+            'AJ Didy Surachman',
+            '?Ajiantoro',
+            'Akbar Mafaza',
+            'Alexander Fernando',
+            '?Alfira Amanda',
+            'Alya Kamila',
+            'Ananda Halim Aditya Putradita',
+            '?Andhika Yudistira',
+            'Andi Fahmi',
+            'Andi Mubarak',
+            'Andi Muhammad Mukhsin Putrama',
+            'Andika Adiputra Thehumury',
+            'Andino Zavtra',
+            '?Andra Hendriarto',
+            'Andrian',
+            'Andy Ardiansyah',
+            'Andy Ardiansyah',
+            'Angga Fiandana',
+            'Aninda Dian Anggraeni',
+            'Anindita Dyah Setiawati',
+            'Anissa Feby Canintika',
+            'Annissa Rosfadilla',
+            'Antoni Antoni',
+            'Aries Rakhmat Hidayat'
+        ];
         let activeNames = [...names]; // Copy of the names array to handle active participants
         let interval;
         let isRunning = false;
+        let shuffleDelay = 80; // Initial shuffle speed
 
         const music = document.getElementById('music');
         const trumpet = document.getElementById('trumpet');
@@ -122,48 +166,60 @@
 
         // Function to start shuffling names
         function startRaffle() {
-            if (isRunning) return; // Don't start if already running
+            if (isRunning || activeNames.length === 0) return;
             isRunning = true;
-            resetNameDisplay(); // Ensure the display is reset before starting
-            nameDisplay.textContent = ""; // Clear the "Nama Peserta" text before shuffling
+            resetNameDisplay();
+            nameDisplay.textContent = "";
             music.play();
-            nameDisplay.classList.add('blur'); // Add blur effect
-            interval = setInterval(() => {
-                const randomName = activeNames[Math.floor(Math.random() * activeNames.length)];
-                nameDisplay.textContent = randomName;
-            }, 100); // Interval set to 50 milliseconds for faster shuffle
+            nameDisplay.classList.add('blur');
+            interval = setInterval(shuffleNames, shuffleDelay);
         }
 
-        // Function to stop shuffling names
+        // Function to shuffle names
+        function shuffleNames() {
+            const randomName = activeNames[Math.floor(Math.random() * activeNames.length)];
+            nameDisplay.textContent = randomName;
+        }
+
+        // Function to stop shuffling names gradually
         function stopRaffle() {
-            if (!isRunning) return; // Don't stop if not running
-            isRunning = false;
-            clearInterval(interval);
-            music.pause();
-            music.currentTime = 0; // Reset music to the beginning
-            nameDisplay.classList.remove('blur'); // Remove blur effect
-            trumpet.play(); // Play trumpet sound
+            if (!isRunning) return;
+
+            function graduallyStop() {
+                if (shuffleDelay < 500) { // Gradually increase delay to slow down
+                    clearInterval(interval);
+                    shuffleDelay += 50; // Increase the delay to slow down
+                    interval = setInterval(shuffleNames, shuffleDelay);
+                    setTimeout(graduallyStop, shuffleDelay); // Continue slowing down
+                } else {
+                    clearInterval(interval);
+                    music.pause();
+                    music.currentTime = 0;
+                    nameDisplay.classList.remove('blur');
+                    trumpet.play();
+                    isRunning = false;
+                }
+            }
+
+            graduallyStop(); // Start the gradual stop process
         }
 
-        // Function to "hanguskan" or remove the current name
+        // Function to remove the current name
         function removeName() {
             const currentName = nameDisplay.textContent;
             if (activeNames.includes(currentName)) {
-                // Mark the name as removed by crossing it out
                 nameDisplay.classList.add('crossed-out');
-
-                // Remove the name from the active list after a delay
                 setTimeout(() => {
                     activeNames = activeNames.filter(name => name !== currentName);
-                    resetNameDisplay(); // Reset display
-                }, 2000); // Adjust delay as needed
+                    resetNameDisplay();
+                }, 2000);
             }
         }
 
         // Function to reset the name display
         function resetNameDisplay() {
-            nameDisplay.textContent = "Nama Peserta"; // Reset display text
-            nameDisplay.classList.remove('crossed-out'); // Remove any crossed-out class
+            nameDisplay.textContent = "Nama Peserta";
+            nameDisplay.classList.remove('crossed-out');
         }
 
         // Event listeners for Start, Stop, and Remove buttons
@@ -172,4 +228,5 @@
         removeBtn.addEventListener('click', removeName);
     </script>
 </body>
+
 </html>
